@@ -35,6 +35,33 @@ export const usePOStore = defineStore('po',()=> {
   
     const appStore = useAppStore()
     
+    // danh sách báo giá đã được duyệt chưa lập Hợp đồng   
+    //09/08/2026 
+    const getPQP_LIST = async (data=null) => {
+        appStore.isLoading = true        
+        try {
+            let config = {     
+            }  
+            
+            var result = await axiosInstance.get(`po/getPQP_LIST`, config);
+
+            if(result.data.status === 200) {
+                return {
+                    ok: true,
+                    error: null,
+                    dataPQP_LIST: result.data.dataPQP_LIST,
+                }
+            } else
+            {
+                throw new Error(result.data.error)
+            }
+        } catch(error) {
+        throw error
+            } finally {
+                appStore.isLoading = false
+            }
+    }
+
     // cập nhật giao việc thực hiện báo giá
     // code 28/08/2026
     const updateGiaoviecThucHienBao = async ( data: Record<string, any> ) => {
@@ -1617,34 +1644,6 @@ const saveExcelPOs_DTL = async ( data=null ) => {
         }
     }
 
-    //code 05/01/2025
-    //Cập nhật kế hoạch sử dụng nguyên liệu cho Demand
-    const UpdatePlan_Material_Demand = async ( data=null ) => {
-        appStore.isLoading = true 
-        try {
-
-            var result = await axiosInstance.post(`po/UpdatePlan_Material_Demand`, data);           
-            
-            //console.log('mater',result.data);
-            if(result.data.status === 200) {
-                return {
-                    ok: true,
-                    error: null,
-                    data_Inventory_PO: result.data.data_Inventory_PO
-                }
-            } else
-            {
-                return {
-                    ok: false,
-                    error: result.data.error
-                }
-            }
-        } catch(error) {
-            throw error
-        } finally {
-            appStore.isLoading = false
-        }
-    }
 
     // Tạo PO Mua hàng theo tuần cho SUM 
     // code 25/12/2024
@@ -2246,7 +2245,7 @@ const saveExcelPOs_DTL = async ( data=null ) => {
     
     // UP Yêu cầu xuất hàng cho khách hàn lên ERP
     //code 29/02/2024
-    const UPDeNghiGiaoHang_ERP = async ( data=null ) => {
+    const UPDeNghiGiaoHang_ERP = async ( data: any ) => {
         try {
             appStore.isLoading = true 
             let config = {
@@ -2275,7 +2274,7 @@ const saveExcelPOs_DTL = async ( data=null ) => {
     
     // Hủy nghị giao hàng cho khách hàng
     // code 28/02/2024
-    const huyDeNghiGiaoHang = async ( data=null ) => {
+    const huyDeNghiGiaoHang = async ( data: any ) => {
         try {
             appStore.isLoading = true 
             let config = {
@@ -2304,7 +2303,7 @@ const saveExcelPOs_DTL = async ( data=null ) => {
 
     //code 28/2/2024
     //danh sách đề nghị xuất hàng của demand
-    const getDeNghiXuatHang = async ( data=null ) => {
+    const getDeNghiXuatHang = async ( data: any ) => {
         appStore.isLoading = true 
         try {
             let config = {
@@ -2336,7 +2335,7 @@ const saveExcelPOs_DTL = async ( data=null ) => {
     
     // Lập đề nghị giao hàng cho khách hàng
     // code 04/02/2024
-    const DeNghiXuatHang = async ( data=null ) => {
+    const DeNghiXuatHang = async ( data: any ) => {
         try {
             appStore.isLoading = true 
             let config = {
@@ -2365,7 +2364,7 @@ const saveExcelPOs_DTL = async ( data=null ) => {
 
     //code 08/2/2024
     //danh sách thành phẩm tồn kho
-    const getThanhPham_Kho = async ( data=null ) => {
+    const getThanhPham_Kho = async ( data: any) => {
         try {
             appStore.isLoading = true 
             let config = {
@@ -4032,6 +4031,12 @@ const saveExcelPOs_DTL = async ( data=null ) => {
        
 
     return {
+        getThanhPham_Kho,
+        DeNghiXuatHang,
+        getDeNghiXuatHang,
+        huyDeNghiGiaoHang,
+        UPDeNghiGiaoHang_ERP,
+        getPQP_LIST,
         getChitiet_POfoDemanDTL,
         duyetBaoGia,
         getAllDTLQoute,

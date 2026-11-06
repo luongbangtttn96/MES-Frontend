@@ -35,9 +35,9 @@ import MaterialExist from '../components/pmc/MaterialExist.vue'
 import MaterialRequirementContaine from '../components/pmc/MaterialRequirementContaine.vue'
 import PlanSchedulePro from '../components/pmc/MPS/Plan_Schedure_Pro.vue'
 import PlanlotClosing from '../components/pmc/lotClosing/semiFinishedProduct.vue'
-import Demands from '../components/pmc/MPS/Demands/Demands.vue'
+
 import ViewListScheduPro from '../components/pmc/MPS/Schedure/PlanSchedureProduc.vue'
-import DemandsDTL from '../components/pmc/MPS/Demands/Demands_DTL.vue'
+
 import DamendsCaculationMaterial from '../components/pmc/MPS/Demands/DemandsCalculationMaterial.vue';
 import Form_TongHopBoSungNL from '../components/pmc/MPS/Demands/Form_TongHopBoSungNL.vue';
 import DemandsTheoDoiMateral from '../components/pmc/MPS/Demands/DemandsTheoDoiMateral.vue'
@@ -47,14 +47,14 @@ import MPSCreaterWO from '../components/pmc/MPS/WO/CreaterWO.vue'
 import manufacturer_material from '../components/BaseMaterial/Manufacturer_Materal.vue'
 import PART_UPDATE_PLAN from '../components/pmc/MPS/WO/PART_UPDATE_PLAN.vue'
 import form_setScheDuPro from '../components/pmc/MPS/SET/Form_SetScheduProduc.vue'
-import CountCalculationMaterial from '../components/pmc/MPS/Demands/CountCalculationMaterial.vue'
+
 import setMaterialWastage from '../components/pmc/Material_Wastage.vue';
 import CANCEL_PO from '../components/pmc/MRP/CANCEL_PO.vue'
 import ManageCancel_Material_PO from '../components/PO/ManageCancel_Material_PO.vue'
 
 import BI_WO_Month from '../components/pmc/MPS/WO/BI_WO_Month.vue'
 import ReportXuattraDemand from '../components/pmc/MPS/Demands/ReportXuattraDemand.vue'
-import DanhSach_AllDemand_DTL from '../components/pmc/MPS/Demands/DanhSach_ALLDemand_DTL.vue'
+
 
 import Update_Manufacturer_Material from '../components/BaseMaterial/Update_Manufacturer_Material.vue'
 
@@ -65,8 +65,7 @@ import BomGia_DTL_Project from '../components/pmc/MPS/Demands/BomGia_DTL_Project
 import Demand_Group_PO from '../components/pmc/MPS/Demands/Demand_GROUP_PO.vue'
 
 import ShowSumForecast from '../components/pmc/MPS/Demands/Forecast/ShowSumForecast.vue'
-import Form_DateForecastPO_material from '../components/pmc/MPS/Demands/Forecast/Form_DateForecastPO_material.vue'
-import MaterialLT_Forecast from '../components/pmc/MPS/Demands/Forecast/MaterialLT_Forecast.vue'
+
 
 import BaoCaoTheoGioiKiemSoat_NLSX from '../components/pmc/MPS/Demands/BaoCaoTheoDoiKiemSoat_NLSX.vue'
 
@@ -252,8 +251,7 @@ import PO_ReadyVC from '../components/PO/PO_ReadyVC.vue'
 import PURCHASE_ORDER from '../components/PO/Reports/PURCHASE_ORDER.vue'
 import PO_Material_Ch_VC from '../components/pmc/MRP/PO_Material_Ch_VC.vue'
 import CONTRACT_PO from '../components/PO/Reports/CONTRACT_PO.vue'
-//================= Customer =================================
-import QLCustomers from '../components/Customers/QL_Customers.vue'
+
 //==================BI ========================
 import VongQuayTonKho from '../components/BI/VongQuayTonKho.vue'
 //=============================================
@@ -308,15 +306,7 @@ export default new Router({
       component: VongQuayTonKho,
 
     },
-    // =============== Customer ================
-
-    {
-      path: '/cus/QLCustomers',
-      name: 'QLCustomers',
-      beforeEnter: ifAuthenticated,
-      component: QLCustomers,
-
-    },
+   
     //=================Traceability============
 
     {
@@ -1287,12 +1277,7 @@ export default new Router({
       beforeEnter: ifAuthenticated
     },
 
-    {
-      path: '/pmc/DanhSach_AllDemand_DTL',
-      name: 'DanhSach_AllDemand_DTL',
-      component: DanhSach_AllDemand_DTL,
-      beforeEnter: ifAuthenticated
-    },
+  
 
     {
       path: '/pmc/BaoCao_YCXuat_SO',
@@ -1314,25 +1299,7 @@ export default new Router({
       beforeEnter: ifAuthenticated
     },
 
-    {
-      path: '/pmc/MaterialLT_Forecast',
-      name: 'MaterialLT_Forecast',
-      component: MaterialLT_Forecast,
-      beforeEnter: ifAuthenticated
-    },
-    {
-      path: '/pmc/Form_DateForecastPO_material',
-      name: 'Form_DateForecastPO_material',
-      component: Form_DateForecastPO_material,
-      beforeEnter: ifAuthenticated
-    },
-
-    {
-      path: '/pmc/ShowSumForecast',
-      name: 'ShowSumForecast',
-      component: ShowSumForecast,
-      beforeEnter: ifAuthenticated
-    },
+  
 
     {
       path: '/pmc/Demand_Group_PO',
@@ -1391,13 +1358,7 @@ export default new Router({
       beforeEnter: ifAuthenticated
     },
 
-    // 09/05/2023
-    {
-      path: '/pmc/CountCalculationMaterial',
-      name: 'CountCalculationMaterial',
-      component: CountCalculationMaterial,
-      beforeEnter: ifAuthenticated
-    },
+
     // 28/02/2023
     {
       path: '/pmc/form_setScheDuPro',
@@ -1478,19 +1439,8 @@ export default new Router({
       beforeEnter: ifAuthenticated
     },
 
-    {
-      path: '/pmc/DemandsDTL',
-      name: 'DemandsDTL',
-      component: DemandsDTL,
-      beforeEnter: ifAuthenticated
-    },
 
-    {
-      path: '/pmc/Demands',
-      name: 'Demands',
-      component: Demands,
-      beforeEnter: ifAuthenticated
-    },
+
 
     {
       path: '/pmc/lotClosing',

@@ -96,18 +96,18 @@ export const useBomStore  = defineStore('bom',()=>{
 
      // Part Num Không thuộc Bom
     // 29/06/2025
-    async function getPart_num_not_PROJECT(data = null) {
+    async function getPart_num_not_PROJECT(data: any = null) {
 
         appStore.isLoading = true
 
         try {
 
             const config = {
-            params: data,
             }
 
-            const result = await axiosInstance.get(
+            const result = await axiosInstance.post(
             'bom/getPart_num_not_PROJECT',
+            data,
             config
             )
 
@@ -479,7 +479,7 @@ export const useBomStore  = defineStore('bom',()=>{
 
        // lấy danh sách đối tượng BOM của Project
     //code 09/05/2023
-    async function getdataBomObjectProject( data=null ) {
+    async function getdataBomObjectProject( data: any) {
         appStore.isLoading = true
         try {
             console.log(data);

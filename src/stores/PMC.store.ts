@@ -6,6 +6,37 @@ import { useAppStore } from '@/stores/app.store'
 
 export const usePMCStore = defineStore('pmc',()=> {   
     const appStore = useAppStore()
+
+    //code 05/01/2025
+    //Cập nhật kế hoạch sử dụng nguyên liệu cho Demand
+    const UpdatePlan_Material_Demand = async ( data: any ) => {
+        appStore.isLoading = true 
+        try {
+
+            var result = await axiosInstance.post(`pmc/UpdatePlan_Material_Demand`, data);           
+            
+            //console.log('mater',result.data);
+            if(result.data.status === 200) {
+                return {
+                    ok: true,
+                    error: null,
+                    data_Inventory_PO: result.data.data_Inventory_PO
+                }
+            } else
+            {
+                return {
+                    ok: false,
+                    error: result.data.error
+                }
+            }
+        } catch(error) {
+            throw error
+        } finally {
+            appStore.isLoading = false
+        }
+    }
+
+
 // thiết lập chọn mua nguyên liệu select
 // code 31/8/2026
 const thietLapSelectedQuote = async ( data:{QMA_ID: string, SELECTED: boolean}) => {
@@ -81,32 +112,6 @@ const SendMail_QouteSup = async ( data: any) => {
         }
     } catch(error) {
         throw error
-        } finally {
-            appStore.isLoading = false
-        }
-}
-// danh sách báo giá đã được duyệt chưa lập Hợp đồng   
-//09/08/2026 
-const getPQP_LIST = async (data=null) => {
-    appStore.isLoading = true        
-    try {
-        let config = {     
-        }  
-        
-        var result = await axiosInstance.get(`pmc/getPQP_LIST`, config);
-
-        if(result.data.status === 200) {
-            return {
-                ok: true,
-                error: null,
-                dataPQP_LIST: result.data.dataPQP_LIST,
-            }
-        } else
-        {
-            throw new Error(result.data.error)
-        }
-    } catch(error) {
-       throw error
         } finally {
             appStore.isLoading = false
         }
@@ -207,7 +212,7 @@ const setNCNR_REQ_Material_Demand = async (data=null ) => {
 
     // lấy danh sách demand chi tiết forecast theo matrận ngày
     //code 15/01/2025
-    const get_FORECAST_days = async ( data=null ) => {
+    const get_FORECAST_days = async ( data: any ) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -237,30 +242,6 @@ const setNCNR_REQ_Material_Demand = async (data=null ) => {
     }
 }
 
-//Lưu thêm khách hàng  
-//09/07/2026  
-const LuuAddCustomer = async ( data=null ) => {
-    try {
-        appStore.isLoading = true            
-        //console.log(dataPlanHDR)
-        var result = await axiosInstance.post('pmc/LuuAddCustomer', data);
-        appStore.setMessager(result.data.message)        
-        if(result.data.status === 200) { 
-            return {
-                ok: true,
-            }
-        } else {
-            return {
-                ok: false,
-                error: result.data.error
-            }
-        }
-    } catch(error) {
-        throw error
-    } finally {
-        appStore.isLoading = false
-    }
-}        
 
     // Xóa vật tư khỏi kế hoạch sản xuất
     //18/05/2026
@@ -542,7 +523,7 @@ const getThanhPhamXuat_DemandDTL = async ( data=null ) => {
     
     // Tạm dừng nhu cầu khách hàng
     // code 29/11/2025
-    const PauseDemands = async ( data=null ) => {
+    const PauseDemands = async ( data: any ) => {
 
         try {
             appStore.isLoading = true
@@ -572,7 +553,7 @@ const getThanhPhamXuat_DemandDTL = async ( data=null ) => {
     
      // lấy danh sách Nhu cầu tạm dừng
     //code 03/01/2023
-    const getDataDemands_TamDung = async ( data=null ) => {
+    const getDataDemands_TamDung = async ( data: any ) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -662,7 +643,7 @@ const getThanhPhamXuat_DemandDTL = async ( data=null ) => {
 
 // tạo và thay đổi kế hoạch sản xuất theo nhu cầu (Demain)
     // code 11/10/2025
-    const CreaterPlanForDemand = async (dataPlanHDR=null ) => {
+    const CreaterPlanForDemand = async (dataPlanHDR : any ) => {
         try {
             appStore.isLoading = true            
             //console.log(dataPlanHDR)
@@ -859,7 +840,7 @@ const getInforMaterail_day = async (data= null ) => {
 
 // Lấy tổng hợp kế Hoạch SX SOM+Forcast
     // code 15/07/2025
-    const getSum_PlanSOMForecast_now = async (data= null ) => {
+    const getSum_PlanSOMForecast_now = async (data: any ) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -1089,7 +1070,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     // duyệt thay đổi nhu cầu
     //code 14/02/2025
-    const duyetChange_demand = async (data=null ) => {
+    const duyetChange_demand = async (data: any) => {
         //console.log(data);        
         try {
             appStore.isLoading = true
@@ -1117,7 +1098,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     // lấy danh sách demand chi tiết SOM theo matrận ngày
     //code 15/01/2025
-    const get_SOM_days = async (data=null) => {
+    const get_SOM_days = async (data: any) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -1146,7 +1127,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     // lấy danh sách chi tiết line Nhu cầu cho sản xuất
     //code 22/11/2024
-    const getDemandDTLs_SanXuat = async (data=null) => {
+    const getDemandDTLs_SanXuat = async (data: any) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -1262,7 +1243,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     //Lấy danh sách chi tiết mua hàng có Leadtime dài cho đợt giao theo Forecast
     //code 03/10/2024
-    const getDateForecastPO_materialLT_Detail = async (data=null) => {
+    const getDateForecastPO_materialLT_Detail = async (data: any) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -1292,7 +1273,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     //Lấy danh sách thời gian mua hàng có Leadtime dài cho đợt giao theo Forecast
     //code 02/10/2024
-    const getDateForecastPO_materialLT = async (data=null) => {
+    const getDateForecastPO_materialLT = async (data: any) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -1323,7 +1304,7 @@ const getInforMaterail_day = async (data= null ) => {
 
      //Lấy danh sách thời gian mua hàng cho đợt giao theo Forecast
     //code 27/08/2024
-    const getDateForecastPO_material = async (data=null) => {
+    const getDateForecastPO_material = async (data: any) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -1351,17 +1332,20 @@ const getInforMaterail_day = async (data= null ) => {
     }
     // Khởi tạo lại cho forecast
     //code 26/08/24
-    const ini_Forcast = async ( data=null ) => {
+    const ini_Forcast = async ( data: any ) => {
         //console.log(data);        
         try {
             appStore.isLoading = true
+            // Tác vụ tính toán nặng: nới timeout (0 = không giới hạn)
             let config = {
-
-            }      
-            //console.log(dataPlanHDR)
+                timeout: 300000, // 5 phút
+            }
             var result = await axiosInstance.post('pmc/ini_Forcast', data, config);
+           
             appStore.setMessager(result.data.message)
-            if(result.data.status === 200) {   
+           
+            if(result.data.status === 200) {
+                 console.log(result.data);
                 return {
                     ok: true,
                 }
@@ -1377,7 +1361,7 @@ const getInforMaterail_day = async (data= null ) => {
     
     // lấy ma trân forecast
     //code 17/08/2024
-    const getdata_Forecast = async ( data=null ) => {
+    const getdata_Forecast = async ( data: any ) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -1410,9 +1394,9 @@ const getInforMaterail_day = async (data= null ) => {
 
     // Tạo Demand dtl forecast
     // code 16/08/2024
-    const saveCelForcast = async ( data=null ) => {
+    const saveCelForcast = async ( data: any ) => {
         //console.log(data);
-        appStore.isLoading = true
+        //appStore.isLoading = true
         try {            
             let config = {
 
@@ -1420,7 +1404,7 @@ const getInforMaterail_day = async (data= null ) => {
             //console.log(dataPlanHDR)
             var result = await axiosInstance.post('pmc/saveCelForcast', data, config);
               
-            appStore.setMessager(result.data.message)
+            //appStore.setMessager(result.data.message)
             if(result.data.status === 200) {   
                 return {
                     ok: true,
@@ -1440,19 +1424,19 @@ const getInforMaterail_day = async (data= null ) => {
         } catch(error) {
             throw error
         } finally {
-            appStore.isLoading = false
+            //appStore.isLoading = false
         }
     }
     // lấy danh sách nguyên liệu mua dư trên đường
     //code 03/08/2024
-    const GetMateralMuadu_onway = async ( data=null ) => {
+    const getMateralMuadu_onway = async ( data: any ) => {
         appStore.isLoading = true
         try {
             let config = {
                 params:data,
                 
             }
-            var result = await axiosInstance.get('pmc/GetMateralMuadu_onway', config);
+            var result = await axiosInstance.get('pmc/getMateralMuadu_onway', config);
             //console.log(result)
             
             if(result.data.status === 200) {
@@ -1477,7 +1461,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     // lấy danh sách Nhu cầu dự báo
     //code 31/07/2024
-    const getDemands_forecast = async ( data=null ) => {
+    const getDemands_forecast = async ( data: any ) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -1508,7 +1492,7 @@ const getInforMaterail_day = async (data= null ) => {
 
      // Lấy danh sách loại demand
     // code 28/07/2024
-    const getDataDemandType = async ( data=null ) => {
+    const getDataDemandType = async ( data: any ) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -1740,7 +1724,7 @@ const getInforMaterail_day = async (data= null ) => {
     
     // Mở lại demand đã đóng
     // code 13/06/2024
-    const OpenDemand = async ( data=null ) => {
+    const OpenDemand = async ( data: any ) => {
         try {
             appStore.isLoading = true
             let config = {
@@ -1866,7 +1850,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     // Xác định thời gian mua hàng và thời gian sản xuất
     // code 14/03/2024
-    const LapKeHoachPO_POR = async ( data=null ) => {
+    const LapKeHoachPO_POR = async ( data: any ) => {
         try {
             appStore.isLoading = true
             let config = {
@@ -1895,7 +1879,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     // lấy Nhu cầu (demand)
     //code 12/03/2024
-    const getDemand = async ( data=null ) => {
+    const getDemand = async ( data: any ) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -1990,7 +1974,7 @@ const getInforMaterail_day = async (data= null ) => {
     
      // lấy danh sách Nhu cầu đã chốt
     //code 03/01/2023
-    const getDataDemands_Year = async ( data=null ) => {
+    const getDataDemands_Year = async ( data: any ) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -2084,7 +2068,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     // Đóng nhu cầu khách hàng
     // code 31/08/2023
-    const DongDemand = async (  data=null ) => {
+    const DongDemand = async (  data: any = null ) => {
 
         try {
             appStore.isLoading = true
@@ -2113,7 +2097,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     // lấy số liệu cho chart demand
     //code 30/08/2023
-    const getDataChartDM_Month = async ( data=null ) => {
+    const getDataChartDM_Month = async ( data: any = null ) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -2147,7 +2131,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     // Cập nhật nguyên liệu từ bom cho Demain PO mua hàng
     // code 02/08/2023
-    const UpdateMaterialBomPO = async ( data=null ) => {
+    const UpdateMaterialBomPO = async ( data: any = null ) => {
         try {
             appStore.isLoading = true            
             //console.log(dataPlanHDR)
@@ -2173,7 +2157,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     // lấy nguyên liệu cần cho dự án còn đang SX theo Project
     //code 27/05/2022
-    const getMateralChoDuAnDangSX_Proj = async ( data=null ) => {
+    const getMateralChoDuAnDangSX_Proj = async ( data: any ) => {
         console.log(data);
         appStore.isLoading = true
         try {
@@ -2206,10 +2190,11 @@ const getInforMaterail_day = async (data= null ) => {
     }
 // lấy tồn kho nguyên liệu theo dự án
     //code 10/05/2023
-    const getTongHopTonKhoMaterial_Proj = async ( data=null ) => {
+    const getTongHopTonKhoMaterial_Proj = async ( data: any ) => {
         appStore.isLoading = true
         try {
             let config = {
+                timeout: 300000, // 5 phút
                 params:data,
             }
             var result = await axiosInstance.get('pmc/getTongHopTonKhoMaterial_Proj', config);
@@ -2403,7 +2388,7 @@ const getInforMaterail_day = async (data= null ) => {
     }
     // Hủy Yêu cầu SX trong Demand
     // code 20/03/2023 
-    const HuyYCSanXuat_Demand = async ( data=null ) => {
+    const HuyYCSanXuat_Demand = async ( data: any = null ) => {
         appStore.isLoading = true
         try {
             //console.log(config);
@@ -3095,7 +3080,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     // lấy danh sách Nhu cầu chi tiết của Kế Hoạch theo nhu cầu
     //code 24/05/2022
-    const getDemandDTL = async ( data=null ) => {
+    const getDemandDTL = async ( data: any ) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -3126,7 +3111,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     // lập Nhu cầu chi tiết của khách hàng
     // code 23/05/2022 
-    const LuuDemandDTL = async ( data=null ) => {
+    const LuuDemandDTL = async ( data: any ) => {
         appStore.isLoading = true
         try {
             //console.log(config);
@@ -3161,7 +3146,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     // lấy danh sách Nhu cầu chi tiết của Kế Hoạch theo dự án
     //code 15/05/2022
-    const getDataDemandDTL_Proj = async ( data=null ) => {
+    const getDataDemandDTL_Proj = async ( data: any = null ) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -3194,7 +3179,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     // Hủy Nhu cầu khách hàng
     // code 10/05/2022 
-    const HuyDemands = async ( data: null ) => {
+    const HuyDemands = async ( data: any ) => {
         appStore.isLoading = true
         try {
             //console.log(config);
@@ -3226,7 +3211,7 @@ const getInforMaterail_day = async (data= null ) => {
     }
     // Thêm Nhu cầu khách hàng
     // code 09/05/2022 
-    const saveDemands = async ( data=null ) => {
+    const saveDemands = async ( data: any = null ) => {
         appStore.isLoading = true
         try {
             //console.log(config);
@@ -4080,12 +4065,46 @@ const saveMaterialExist_WO_NOT_EXPORT = async ( dataMaterialExist_WO_NOT_EXPORT=
 }
 
 return {
+    get_SOM_days,
+    getDemandDTLs_SanXuat,
+    get_FORECAST_days,
+    getMateralMuadu_onway,
+    getTongHopTonKhoMaterial_Proj,
+    getMateralChoDuAnDangSX_Proj,
+    HuyYCSanXuat_Demand,
+    UpdateMaterialBomPO,
+    UpdatePlan_Material_Demand,
+    LapKeHoachPO_POR,
+    CreaterPlanForDemand,
+    duyetChange_demand,
+    LuuDemandDTL,
+    getDemandDTL,
+    getDateForecastPO_materialLT,
+    getDateForecastPO_materialLT_Detail,
+    getDateForecastPO_material,
+    getdata_Forecast,
+    saveCelForcast,
+    ini_Forcast,
+    getDataChartDM_Month,
+    DongDemand,
+    saveDemands,
+    getDemands_forecast,
+    getDataDemands_Year,
+    HuyDemands,
+    getDataDemandType,
+    getDemand,
+    OpenDemand,
+    getDataDemands_TamDung,
+    PauseDemands,
+    getDemands,
+    getSum_PlanSOMForecast_now,
     getReportBaoGia_KH,
     getTongHopTonKhoMaterial,
     thietLapSelectedQuote,
     SendMail_QouteSup,
     getSearchCustomers,
     getdataDemands_dtl,
+    getDataDemandDTL_Proj,
     saveMaterialExist_OnWay,
     saveMaterialExist_WO_NOT_EXPORT
 }

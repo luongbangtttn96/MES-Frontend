@@ -39,11 +39,11 @@ const  onChangeSelect=(event: Event) => {
             emit('getValue', target.value )
         }
 
-    onMounted(()=>{
-         departmenStore.getListDepartmens().then(res=>{
-          dataDepartmens.value=[...res.dataDepartmens]
-          });
-    })
+onMounted(()=>{
+        departmenStore.getListDepartmens().then(res=>{
+        dataDepartmens.value=[...res.dataDepartmens]
+        });
+})
 </script>
 
 <style>
