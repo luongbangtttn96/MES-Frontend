@@ -634,10 +634,10 @@ const mau = (item: any) => {
         item.QTY > item.sum_delivery
       )
         return "mauNenCam";
-};
+}
 const handBaoCaoQL_lichPO = () => {
       let src = "";
-      src = "/pmc/po/PO_Plan_Shedule";
+      src = "/pmc/mrp/PO_Plan_Shedule";
       window.open(src, "", "fullscreen=yes, scrollbars=auto, titlebar=no");
     }
 const handDanhSach_FOR_Demand_DTL = () => {

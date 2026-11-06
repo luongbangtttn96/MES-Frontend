@@ -238,7 +238,7 @@ import NEW_PRICEs from '../components/PO/PRICR_QOUTE/NEW_PRICEs.vue'
 import CURRENCY_RATES from '../components/PO/CURRENCY_RATES.vue'
 
 
-import PO_Plan_Shedule from '../components/PO/PO_Plan_Shedule.vue'
+s
 import SetDay_PO_Material from '../components/PO/SetDays_PO_Material.vue'
 import baoCaoChiTietMuaHang from '../components/PO/Baocao/BaoChitietMuaHang.vue'
 import MuaHang_Group from '../components/PO/MuaHang_Group.vue'
@@ -407,12 +407,7 @@ export default new Router({
       beforeEnter: ifAuthenticated,
       component: SetDay_PO_Material,
     },
-    {
-      path: '/pmc/po/PO_Plan_Shedule',
-      name: 'PO_Plan_Shedule',
-      beforeEnter: ifAuthenticated,
-      component: PO_Plan_Shedule,
-    },
+
 
 
 

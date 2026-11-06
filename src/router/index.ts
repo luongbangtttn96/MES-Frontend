@@ -7,6 +7,7 @@ import administrator from './routes/Administrator.routes'
 import user from './routes/user.routes'
 import sourcing from './routes/sourcing.router'
 import pmc from './routes/pmc.router' 
+import mrp from './routes/mrp.router' 
 
 import { useAuthStore } from '@/stores/auth.store'
 declare module 'vue-router' {
@@ -31,6 +32,7 @@ const router = createRouter({
     ...user,
     ...sourcing,
     ...pmc,
+    ...mrp,
   ]
 })
 

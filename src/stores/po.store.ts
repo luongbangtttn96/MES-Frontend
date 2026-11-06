@@ -2119,7 +2119,7 @@ const saveExcelPOs_DTL = async ( data=null ) => {
     }
     //code 10/10/2024
     //Lấy chi tiết mua hàng PO (Open PO).
-    const getMaterialOpenPO = async ( data=null ) => {
+    const getMaterialOpenPO = async ( data: any ) => {
         appStore.isLoading = true 
         try {
             let config = {
@@ -2213,7 +2213,7 @@ const saveExcelPOs_DTL = async ( data=null ) => {
 
     //code 09/4/2024
     //Lấy kế hoạch mua hàng theo 
-    const getPO_Plan_shedule = async ( data=null ) => {
+    const getPO_Plan_shedule = async ( data: any ) => {
         appStore.isLoading = true 
         try {
             let config = {
@@ -4031,6 +4031,8 @@ const saveExcelPOs_DTL = async ( data=null ) => {
        
 
     return {
+        getPO_Plan_shedule,
+        getMaterialOpenPO,
         getThanhPham_Kho,
         DeNghiXuatHang,
         getDeNghiXuatHang,
