@@ -44,9 +44,9 @@
           placeholder="VND"
         />
       </div>
-      <button class="btn btn-info" @click="handDeNghiXuatHang()">
+      <el-button type="primary" class="btn btn-info" @click="handDeNghiXuatHang()">
         Đề nghị xuất
-      </button>
+      </el-button>
       <div>
         <table class="table mt-1">
           <thead>
@@ -65,13 +65,14 @@
               <td>{{ item.QTY }}</td>
               <td>{{ item.STATUS }}</td>
               <td>
-                <button @click="handUPDeNghiGiaoHang_ERP(item)">ERP</button>
-                <button
+                <div class="button-row">
+                <!-- <el-button type="primary" @click="handUPDeNghiGiaoHang_ERP(item)">ERP</el-button> -->
+                <el-button type="danger" 
                   @click="handHuyDeNghiGiaoHang(item.PDDE_ID)"
-                  class="btn-sm btn-danger"
                 >
                   &#10006;
-                </button>
+                </el-button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -170,5 +171,10 @@ const handDeNghiXuatHang = async () => {
   });
 </script>
 
-<style>
+<style scoped>
+.button-row {
+  display: flex;
+  gap: 1px;
+  align-items: center;
+}
 </style>

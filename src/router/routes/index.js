@@ -53,7 +53,7 @@ import CANCEL_PO from '../components/pmc/MRP/CANCEL_PO.vue'
 import ManageCancel_Material_PO from '../components/PO/ManageCancel_Material_PO.vue'
 
 import BI_WO_Month from '../components/pmc/MPS/WO/BI_WO_Month.vue'
-import ReportXuattraDemand from '../components/pmc/MPS/Demands/ReportXuattraDemand.vue'
+
 
 
 import Update_Manufacturer_Material from '../components/BaseMaterial/Update_Manufacturer_Material.vue'
@@ -1329,12 +1329,7 @@ export default new Router({
       beforeEnter: ifAuthenticated
     },
 
-    {
-      path: '/pmc/ReportXuattraDemand',
-      name: 'ReportXuattraDemand',
-      component: ReportXuattraDemand,
-      beforeEnter: ifAuthenticated
-    },
+
 
     {
       path: '/pmc/Update_Manufacturer_Material',

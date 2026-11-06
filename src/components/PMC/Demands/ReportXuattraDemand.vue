@@ -1,36 +1,35 @@
 <template>
   <div>
-    <div class="row m-1">
-      <div>
+    <el-row :gutter="20">
+      <el-col :xs="24" :md="6">
         <label> Tháng:</label>
-        <input
+        <el-input
           type="month"
           v-model="v_month"
           @change="handGetDemandsDTLs_month()"
         />
-      </div>
-      <div class="col-md-3">
+      </el-col>
+      <el-col :xs="24" :md="6">
         <div class="card mt-1">
           <div class="card-body">
             <CharPie :chartData="dataChartDM" :width="160" :height="160" />
           </div>
         </div>
-      </div>
-    </div>
-    <div class="input-group mt-3 mb-2 col-md-3">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default">
-          <b-icon icon="search"></b-icon
-        ></span>
-      </div>
-      <input
+      </el-col>
+    </el-row>
+    <el-col :xs="24" :md="6">
+      <el-input
         type="text"
         class="form-control"
         aria-label="Default"
         aria-describedby="inputGroup-sizing-default"
         v-model="search"
-      />
-    </div>
+      >
+        <template #append>
+          <el-icon><Search /></el-icon>
+        </template>
+    </el-input>
+    </el-col>
 
     <div class="tableFixHead" style="overflow: auto; height: 80vh">
       <table class="table table-striped table-hover">
@@ -83,7 +82,7 @@
             <td>{{ item.NOTE }}</td>
             <td class="text-truncate">
               <div v-if="parseInt(item.QTY) > (parseInt(item.QTY_DELIVER)||0) ">
-                <button
+                <el-button type="primary"
                   v-if="item.StatusId > 9"
                   class="btn btn-info"
                   style="font-size: 14px"
@@ -100,10 +99,10 @@
                   "
                 >
                   Đề nghị xuất TP
-                </button>                 
+                </el-button>                 
               </div>
               <div v-else>
-                <button class="btn btn-sucset" 
+                <el-button type="success" class="btn btn-sucset" 
                 @click="handShowformDenghiXuatDTL(item.StatusId,
                       item.PDD_ID,
                       item.PROJ_CODE,
@@ -112,7 +111,7 @@
                       item.QTY,
                       item.QTY_DELIVER)">
                   Xem 
-                </button>
+                </el-button>
               </div>
               
               <!-- <button  class="btn btn-info" style="font-size:14px" title="Theo dõi nguyên liệu cho SX"
@@ -128,7 +127,7 @@
         </tbody>
       </table>
       <base-dialog
-        :active.sync="ShowFormDeNghixuats"
+        v-model:active="ShowFormDeNghixuats"
         :tile="'Đề nghị xuất hàng'"
       >
         <de-nghi-xuat-hang 
@@ -139,7 +138,7 @@
       </base-dialog>
 
       <base-dialog
-        :active.sync="ShowFormDeNghixuatsDTL"
+        v-model:active="ShowFormDeNghixuatsDTL"
         :tile="'Đề nghị xuất hàng của PO'"
       >
         <DeNghiXuatHangDTL
@@ -152,62 +151,58 @@
   </div>
 </template>
 
-<script>
-import moment from "moment";
-import { mapActions } from "vuex";
+<script setup lang="ts">
+import dayjs from "dayjs";
+import { ref, computed, onMounted } from "vue";
+import { Search } from "@element-plus/icons-vue";
 
-import CharPie from "../../../Chart/CharPie.vue";
-import BaseDialog from "../../../controls/BaseDialog.vue";
+import { usePMCStore } from "@/stores/PMC.store.ts";
+
+import CharPie from "@/components/Chart/CharPie.vue";
+import BaseDialog from "@/components/controls/BaseDialog.vue";
 import DeNghiXuatHang from "./DeNghiXuatHang.vue";
 import DeNghiXuatHangDTL from "./DeNghiXuatHang_DTL.vue";
 
-export default {
-  data() {
-    return {
-      v_month: moment().format("YYYY-MM"),
-      dataDemandsDTLs: [],
-      dataChartDM: {},
+const pmcStore = usePMCStore();
 
-      DaGiao_DungHan: 0,
-      DaGiao_TreHan: 0,
-      ChuaGiao_TrongHan: 0,
-      ChuaGiao_QuaHans: 0,
+const v_month = ref(dayjs().format("YYYY-MM"));
+const dataDemandsDTLs = ref<Record<string, any>[]>([]);
+const dataChartDM = ref<Record<string, any>>({});
 
-      ShowFormDeNghixuats: false,
-      ShowFormDeNghixuatsDTL:false,
-      PDD_ID: 0,
-      QTY: 0,
-      QTY_DELIVER: 0,
-      search: "",
-    };
-  },
-  computed: {
-    showdataDemandDTL() {
-      let data = this.dataDemandsDTLs.filter((element) => {
-        return ( element.PROJ_CODE && element.PROJ_CODE.toUpperCase().includes(this.search.toUpperCase()) ||
-          (element.PO_CODE &&  element.PO_CODE.toUpperCase().includes(this.search.toUpperCase())) ||
-          (element.SALESODER_CODE && element.SALESODER_CODE.toUpperCase().includes(this.search.toUpperCase())) ||
-          (element.NUM_WO && element.NUM_WO.toUpperCase().includes(this.search.toUpperCase())) ||
-          element.PDE_ID == this.search
+const DaGiao_DungHan = ref(0);
+const DaGiao_TreHan = ref(0);
+const ChuaGiao_TrongHan = ref(0);
+const ChuaGiao_QuaHan = ref(0);
+
+const ShowFormDeNghixuats = ref(false);
+const ShowFormDeNghixuatsDTL = ref(false);
+const PDD_ID = ref(0);
+const QTY = ref(0);
+const QTY_DELIVER = ref(0);
+const search = ref("");
+const CurenDemand = ref<Record<string, any>>({});
+
+//  computed: {
+const showdataDemandDTL = computed(() => {
+      let data = dataDemandsDTLs.value.filter((element) => {
+        return ( element.PROJ_CODE && element.PROJ_CODE.toUpperCase().includes(search.value.toUpperCase()) ||
+          (element.PO_CODE &&  element.PO_CODE.toUpperCase().includes(search.value.toUpperCase())) ||
+          (element.SALESODER_CODE && element.SALESODER_CODE.toUpperCase().includes(search.value.toUpperCase())) ||
+          (element.NUM_WO && element.NUM_WO.toUpperCase().includes(search.value.toUpperCase())) ||
+          element.PDE_ID == search.value
         );
       });
       return data;
-    },
-  },
-  components: {
-    CharPie,
-    BaseDialog,
-    DeNghiXuatHang,
-    DeNghiXuatHangDTL
-  },
-  methods: {
-    ...mapActions([
-      "LuuDemandDTL",
-      "getDemandDTLs_month",
-      "HuyYCSanXuat_Demand",
-      "UpdateMaterialBomPO",
-    ]),
-    getDataChar() {
+    });
+
+//  methods: {
+    // ...mapActions([
+    //   "LuuDemandDTL",
+    //   "getDemandDTLs_month",
+    //   "HuyYCSanXuat_Demand",
+    //   "UpdateMaterialBomPO",
+    // ]),
+const getDataChar = () => {
       //this.isShowChar=false
       let data = {
         labels: [
@@ -224,10 +219,10 @@ export default {
             data: [
               0,
               0,
-              this.DaGiao_DungHan,
-              this.DaGiao_TreHan,
-              this.ChuaGiao_TrongHan,
-              this.ChuaGiao_QuaHan,
+              DaGiao_DungHan.value,
+              DaGiao_TreHan.value,
+              ChuaGiao_TrongHan.value,
+              ChuaGiao_QuaHan.value,
             ],
             backgroundColor: [
               "",
@@ -242,8 +237,8 @@ export default {
           {
             label: [],
             data: [
-              this.DaGiao_DungHan + this.DaGiao_TreHan,
-              this.ChuaGiao_TrongHan + this.ChuaGiao_QuaHan,
+              DaGiao_DungHan.value + DaGiao_TreHan.value,
+              ChuaGiao_TrongHan.value + ChuaGiao_QuaHan.value,
             ],
             backgroundColor: ["#00D8FF", "#E46651"],
             hoverOffset: 4,
@@ -257,81 +252,77 @@ export default {
         ],
       };
       return data;
-    },
-    handShowformDenghiXuatDTL(StatusId, PDD_ID, PROJ_CODE,START_DEMANDS,END_DEMANDS,QTY,QTY_DELIVER){
-      this.PDD_ID = PDD_ID;
-      this.QTY = QTY;
-      this.QTY_DELIVER = QTY_DELIVER;
-      this.ShowFormDeNghixuatsDTL = true;
-    },
-    handShowformDenghiXuat(
-      StatusId,
-      PDD_ID,
-      PROJ_CODE,
-      START_DEMANDS,
-      END_DEMANDS,
-      QTY,
-      QTY_DELIVER
+    }
+const handShowformDenghiXuatDTL = (StatusId: number, _PDD_ID: number, PROJ_CODE: string, START_DEMANDS: string, END_DEMANDS: string, _QTY: number, _QTY_DELIVER: number) => {
+      PDD_ID.value = _PDD_ID;
+      QTY.value = _QTY;
+      QTY_DELIVER.value = _QTY_DELIVER;
+      ShowFormDeNghixuatsDTL.value = true;
+    };
 
-    ) {
-      this.PDD_ID = PDD_ID;
-      this.QTY = QTY;
-      this.QTY_DELIVER = QTY_DELIVER;
-      this.ShowFormDeNghixuats = true;
+const handShowformDenghiXuat = (
+      StatusId: number,
+      _PDD_ID: number,
+      PROJ_CODE: string,
+      START_DEMANDS: string,
+      END_DEMANDS: string,
+      _QTY: number,
+      _QTY_DELIVER: number
+    ) => {
+      PDD_ID.value = _PDD_ID;
+      QTY.value = _QTY;
+      QTY_DELIVER.value = _QTY_DELIVER;
+      ShowFormDeNghixuats.value = true;
 
       //console.log(this.PDD_ID);
-    },
-    handSelectDemand(item) {
-      this.CurenDemand = item;
-    },
+    };
+const handSelectDemand = (item: any) => {
+      CurenDemand.value = item;
+    };
 
-    handGetDemandsDTLs_month() {
-      this.procgetDemandDTLs_month();
-    },
-    procgetDemandDTLs_month() {
-      this.getDemandDTLs_month({ v_month: this.v_month }).then((res) => {
-        this.dataDemandsDTLs = res.dataDemandsDTLs;
+const handGetDemandsDTLs_month = () => {
+      procgetDemandDTLs_month();
+    };
+const procgetDemandDTLs_month = async () => {
+      const res = await pmcStore.getDemandDTLs_month({ v_month: v_month.value });
+      dataDemandsDTLs.value = res.dataDemandsDTLs;
 
-        (this.DaGiao_DungHan = 0),
-          (this.DaGiao_TreHan = 0),
-          (this.ChuaGiao_TrongHan = 0),
-          (this.ChuaGiao_QuaHan = 0),
-          this.dataDemandsDTLs.forEach((element) => {
-            if (
-              element.DATE_DELIVER &&
-              moment(element.END_DEMANDS, "DD/MM/YYYY") >=
-                moment(element.DATE_DELIVER, "DD/MM/YYYY")
-            )
-              this.DaGiao_DungHan++;
-            if (
-              element.DATE_DELIVER &&
-              moment(element.END_DEMANDS, "DD/MM/YYYY") <
-                moment(element.DATE_DELIVER, "DD/MM/YYYY")
-            )
-              this.DaGiao_TreHan++;
-            if (
-              !element.DATE_DELIVER &&
-              moment(element.END_DEMANDS, "DD/MM/YYYY") >= moment()
-            )
-              this.ChuaGiao_TrongHan++;
-            if (
-              !element.DATE_DELIVER &&
-              moment(element.END_DEMANDS, "DD/MM/YYYY") < moment()
-            )
-              this.ChuaGiao_QuaHan++;
-            // console.log(element.DATE_DELIVER,element.END_DEMANDS,this.DaGiao_DungHan,this.DaGiao_TreHan,this.ChuaGiao_TrongHan,this.ChuaGiao_QuaHan);
-          });
+      DaGiao_DungHan.value = 0;
+      DaGiao_TreHan.value = 0;
+      ChuaGiao_TrongHan.value = 0;
+      ChuaGiao_QuaHan.value = 0;
+      dataDemandsDTLs.value.forEach((element) => {
+          if (
+            element.DATE_DELIVER &&
+            dayjs(element.END_DEMANDS, "DD/MM/YYYY") >=dayjs(element.DATE_DELIVER, "DD/MM/YYYY")
+          )
+            DaGiao_DungHan.value++;
+          if (
+            element.DATE_DELIVER &&
+            dayjs(element.END_DEMANDS, "DD/MM/YYYY") < dayjs(element.DATE_DELIVER, "DD/MM/YYYY")
+          )
+            DaGiao_TreHan.value++;
+          if (
+            !element.DATE_DELIVER &&
+            dayjs(element.END_DEMANDS, "DD/MM/YYYY") >= dayjs()
+          )
+            ChuaGiao_TrongHan.value++;
+          if (
+            !element.DATE_DELIVER &&
+            dayjs(element.END_DEMANDS, "DD/MM/YYYY") < dayjs()
+          )
+            ChuaGiao_QuaHan.value++;
+          // console.log(element.DATE_DELIVER,element.END_DEMANDS,this.DaGiao_DungHan,this.DaGiao_TreHan,this.ChuaGiao_TrongHan,this.ChuaGiao_QuaHan);
+        });
 
-        this.dataChartDM = this.getDataChar();
+      dataChartDM.value = getDataChar();
 
-        console.log(this.dataChartDM);
-      });
-    },
-  },
-  created() {
-    this.procgetDemandDTLs_month();
-  },
-};
+      console.log(dataChartDM.value);
+    };
+
+onMounted(() => {
+    procgetDemandDTLs_month();
+});
 </script>
 
 <style>

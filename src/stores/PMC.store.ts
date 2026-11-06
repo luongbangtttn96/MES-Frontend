@@ -1909,7 +1909,7 @@ const getInforMaterail_day = async (data= null ) => {
 
      // lấy danh sách Nhu cầu chi tiết theo tháng
     //code 05/02/2024
-    const getDemandDTLs_month = async ( data=null ) => {
+    const getDemandDTLs_month = async ( data: any ) => {
         appStore.isLoading = true
         try {
             let config = {
@@ -4065,6 +4065,7 @@ const saveMaterialExist_WO_NOT_EXPORT = async ( dataMaterialExist_WO_NOT_EXPORT=
 }
 
 return {
+    getDemandDTLs_month,
     get_SOM_days,
     getDemandDTLs_SanXuat,
     get_FORECAST_days,
