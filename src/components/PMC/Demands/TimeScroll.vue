@@ -5,54 +5,60 @@
 
 	<div class='ds-control'>
 		<table>
-			<tr class='ds-nav'>
-				<th class='ds-nav-btn' @click='navigateToDate(cur_time[0], -7)'>&#10158;</th>
-				<th class='ds-nav-info'>
-					<p>{{ cur_time[0].format('L') + " - " + cur_time[cur_time.length - 1].format('L') }}</p>
-					<!-- <calender-dropdown
-					:today="today"
-					:nav_week="cur_time[0]"
-					@nav="navigateToDate">
-					</calender-dropdown> -->
-				</th>
-				<th class='ds-nav-btn' @click='navigateToDate(cur_time[0], 7)'>>></th>
-			</tr>
+			<thead>			
+				<tr class='ds-nav'>
+					<th class='ds-nav-btn' @click='navigateToDate(cur_time[0], -7)'>&#10158;</th>
+					<th class='ds-nav-info'>
+						<p>{{ cur_time[0].format('L') + " - " + cur_time[cur_time.length - 1].format('L') }}</p>
+						<!-- <calender-dropdown
+						:today="today"
+						:nav_week="cur_time[0]"
+						@nav="navigateToDate">
+						</calender-dropdown> -->
+					</th>
+					<th class='ds-nav-btn' @click='navigateToDate(cur_time[0], 7)'>>></th>
+				</tr>
+			</thead>
 		</table>
 	</div>
 	<div class="ds-calender">
 		<table ref='table'>
-			<tr class='ds-row-header'>
-				<th class='placeholder'></th>
-				<th 
-				scope='col' 
-				v-for="(time, i) in cur_time" 
-				:class="{ 'ds-today': today.isSame(cur_time[i], 'day') }"
-				:key="i" 
-				:col-index="i">
-					<span>{{ time.format('DD/MM')}}</span>
-				</th>
-			</tr>
+			<thead>
+				<tr class='ds-row-header'>
+					<th class='placeholder'></th>
+					<th 
+					scope='col' 
+					v-for="(time, i) in cur_time" 
+					:class="{ 'ds-today': today.isSame(cur_time[i], 'day') }"
+					:key="i" 
+					:col-index="i">
+						<span>{{ time.format('DD/MM')}}</span>
+					</th>
+				</tr>	
+			</thead>
+			
 			<!-- 
 			<calender-overlay
 			:cur_time="cur_time"
 			@pull_overlay="(...args) => { $emit('pull_overlay', ...args); }"
 			></calender-overlay> -->
-
-			<tr 
-			v-for="(project, i) in project_lable" 
-			:class="{ 'ds-minor': (project.indexOf(':') != -1) }" 
-			:key="i" 
-			:row-index="i">
-				<td scope='row'>{{ (project.indexOf(':30')==-1 || display_half_hour_labels) ? project : "" }}</td>
-				<td 
-				class="ds-slot" 
-				v-for="(_slot, j) in day_labels" 
-				:key="j" 
-				:col-index="j"
-				:class="{ 'ds-avail':(mat_overlay[i][j]!=null) ? mat_overlay[i][j] : mat[i][j] }"
-				
-				></td>
-			</tr>
+			<tbody>
+				<tr 
+				v-for="(project, i) in project_lable" 
+				:class="{ 'ds-minor': (project.indexOf(':') != -1) }" 
+				:key="i" 
+				:row-index="i">
+					<td scope='row'>{{ (project.indexOf(':30')==-1 || display_half_hour_labels) ? project : "" }}</td>
+					<td 
+					class="ds-slot" 
+					v-for="(_slot, j) in day_labels" 
+					:key="j" 
+					:col-index="j"
+					:class="{ 'ds-avail':(mat_overlay[i][j]!=null) ? mat_overlay[i][j] : mat[i][j] }"
+					
+					></td>
+				</tr>
+			</tbody>
 		</table>
 	</div>
 </div> <!-- calendar :title="matTitle[i][j]"-->

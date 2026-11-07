@@ -20,6 +20,7 @@ import {
 	TrendCharts,
 	UserFilled,
 	ShoppingCart,
+	Calendar,
 } from '@element-plus/icons-vue'
 
 import { useAuthStore, type MenuItem } from '../../stores/auth.store'
@@ -98,6 +99,7 @@ const iconMap: Record<string, Component> = {
 	arrowright: ArrowRight,
 	elementplus: ElementPlus,
 	shoppingcart: ShoppingCart,
+	calendar: Calendar,
 }
 
 function resolveMenuIcon(icon?: string) {

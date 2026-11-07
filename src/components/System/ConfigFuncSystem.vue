@@ -8,7 +8,10 @@
           <h4>Thông tin chức năng</h4>
           <p>Thiết lập menu cha, mã chức năng, nhãn và đường dẫn cho hệ thống.</p>
         </div>
-        <el-button class="btn btn-primary" @click="hand_LuuConfigFuncSystem()">Lưu cấu hình</el-button>
+        <el-button-group>
+          <el-button type="primary" class="btn btn-primary" @click="hand_LuuConfigFuncSystem()">Lưu cấu hình</el-button>
+          <el-button type="danger" :icon="Delete" class="btn btn-secondary" @click="hand_XoaConfigFuncSystem()"/>
+        </el-button-group>
       </div>
 
       <el-row :gutter="2">
@@ -177,6 +180,8 @@ import TitlePage from "@/components/controls/TitlePage.vue";
 //mport contrSelectFunctionSys from "@/components/controls/SelectProject/DynamicSelect.vue";
 
 import { useSystemStore, type MenuItem } from '@/stores/system.store';
+import { ElButton } from 'element-plus';
+import { Delete  } from '@element-plus/icons-vue';
 
 
  interface treeNode extends MenuItem {
@@ -213,6 +218,12 @@ const querySearch = (queryString: string, cb: any) => {
   cb(results)
 }
 
+const hand_XoaConfigFuncSystem = async () => {
+  if (!itemFunctionSys.value || !itemFunctionSys.value.MENU_NAME) return;
+  await systemStore.XoaConfigFuncSystem(itemFunctionSys.value.MENU_NAME);
+  pro_getFunctionSys_DTL();
+  proc_getFunctionSys();
+};
 const handleSelect = (item: SelectMenuItem) => {
   SelectMenuValue.value= item
   itemFunctionSys.value = {

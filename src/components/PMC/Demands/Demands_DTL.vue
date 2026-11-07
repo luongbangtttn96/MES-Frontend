@@ -522,7 +522,7 @@ const handNLSX = () => {
 
         let src = "";
         src =
-          "/pmc/DamendsCaculationMaterial?id=" +
+          "/mrp/DamendsCaculationMaterial?id=" +
           id +
           "&projec=" +
           projec +
@@ -541,7 +541,7 @@ const handForward = (status: number, id: number, projec: string, Start: string, 
       let src = "";
       switch (status) {
         case 1: // tính nguyên liệu
-          src ="/pmc/DamendsCaculationMaterial?id=" + id +"&projec=" + projec + "&Start=" +Start +"&end=" + end + "&qty=" + qty + "&PO_CODE=" +
+          src ="/mrp/DamendsCaculationMaterial?id=" + id +"&projec=" + projec + "&Start=" +Start +"&end=" + end + "&qty=" + qty + "&PO_CODE=" +
             CurenDemand.value.PO_CODE;
           window.open(
             src,

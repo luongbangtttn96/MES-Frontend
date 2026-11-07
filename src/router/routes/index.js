@@ -1287,12 +1287,7 @@ export default new Router({
       beforeEnter: ifAuthenticated
     },
 
-    {
-      path: '/pmc/BaoCaoTheoGioiKiemSoat_NLSX',
-      name: 'BaoCaoTheoGioiKiemSoat_NLSX',
-      component: BaoCaoTheoGioiKiemSoat_NLSX,
-      beforeEnter: ifAuthenticated
-    },
+  
 
   
 
@@ -1422,12 +1417,7 @@ export default new Router({
       beforeEnter: ifAuthenticated
     },
 
-    {
-      path: '/pmc/DamendsCaculationMaterial',
-      name: 'DamendsCaculationMaterial',
-      component: DamendsCaculationMaterial,
-      beforeEnter: ifAuthenticated
-    },
+  
 
 
 

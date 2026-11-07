@@ -222,13 +222,13 @@
               Chi tiết SO
             </el-button>
             <el-button class="btn btn-info" @click="handBaoCaoXuattraDemand()">
-              Báo cáo xuất trả nhu cầu
+              QL xuất trả nhu cầu
             </el-button>
             <el-button class="btn btn-info" @click="handBaoCaoQL_lichPO()">
-              Báo cáo QL lịch mua hàng
+              QL lịch mua hàng
             </el-button>
             <el-button class="btn btn-info" @click="handBaoCaoTheoGioiKiemSoat_NLSX()">
-              Báo cáo kiểm soát nguyên liệu SX
+              Kiểm soát nguyên liệu SX
             </el-button>
             </el-button-group>
             </el-row>
@@ -558,7 +558,7 @@ const handShowYCXuat_SO = (even: Event, SO_CODE: string) => {
     }
 const handBaoCaoTheoGioiKiemSoat_NLSX = () => {
       let src = "";
-      src = "/pmc/BaoCaoTheoGioiKiemSoat_NLSX";
+      src = "/mrp/BaoCaoTheoGioiKiemSoat_NLSX";
       window.open(src, "", "fullscreen=yes, scrollbars=auto, titlebar=no");
     }
 const handOpenDemand = async (PDE_ID: number|string|null) => {

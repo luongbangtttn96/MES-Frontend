@@ -19,7 +19,28 @@ export const useSystemStore = defineStore('system',() => {
 
     const appStore = useAppStore();
 
-
+const XoaConfigFuncSystem = async (MENU_NAME: string) => {
+    try {
+        appStore.isLoading = true
+        var result = await axiosInstance.post('system/XoaConfigFuncSystem', { MENU_NAME });
+        if(result.data.status === 200) {
+            appStore.setMessager(result.data.message)
+            return {
+                ok: true,
+            }
+        } else {
+            appStore.setMessager(result.data.message)
+            return {
+                ok: false,
+                error: result.data.error
+            }
+        }
+    } catch(error) {
+        throw error
+    } finally {
+        appStore.isLoading = false
+    }
+}
     /* lấy danh sách các loại tiền*/
    //code 07/12/2023
    async function getdataCurrency( data=null) {
@@ -138,6 +159,7 @@ export const useSystemStore = defineStore('system',() => {
     }
 }
     return {
+        XoaConfigFuncSystem,
         getdataCurrency,
         getFunctionSys_DTL,
         LuuConfigFuncSystem,

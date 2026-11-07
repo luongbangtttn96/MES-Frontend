@@ -4,11 +4,11 @@
     <div class="row m-1 justify-content-between">
         <div>
             <label class="btn btn-sm" for="">Mã nguyên liệu</label>
-            <input class="form-control-sm" type="text" size="20" maxlength="30" v-model="PART_NUM" @blur="handInfoSeriaMateralUser()" @keydown.enter="handInfoSeriaMateralUser()">
-          
+            <el-input class="form-control-sm" type="text" size="20" maxlength="30" v-model="PART_NUM" @blur="handInfoSeriaMateralUser()" @keydown.enter="handInfoSeriaMateralUser()">
+            </el-input>          
         </div>
         <div class="justify-content-lg-end">
-            <button class="btn btn-sm" @click="handExportExel()" >export Excel</button>
+            <el-button class="btn btn-sm" @click="handExportExel()" >export Excel</el-button>
         </div>
     </div>
     <div class="tableFixHead" style="height: 95vh;">
@@ -46,41 +46,44 @@
   </div>
 </template>
 
-<script>
-import moment, { min } from 'moment';
-import TitlePage from '../../../controls/TitlePage.vue'
-import { mapActions } from 'vuex/dist/vuex.common.js';
-import { exportData } from '../../../../plugins/Excel';
-export default {
-  components: { TitlePage },
-    data(){
-        return{
-            PART_NUM:'',
-            dataStocPart_num:[],
-            dataMaterialOnWay:[],
-            dataPlanUsePartNum_Porj:[],
-            dataPlanUsePartNum_Porj_Ngay:[],
-        }
-    },
-    computed:{
-        dataSeriaMateralUser_Date(){
+<script setup lang="ts">
+import dayjs from 'dayjs';
+
+import { ref, computed } from 'vue';
+import { exportData } from '@/plugins/Excel';
+import { useInvStore } from '@/stores/inv.store'
+import { usePMCStore } from '@/stores/PMC.store'
+
+import TitlePage from '@/components/controls/TitlePage.vue'
+
+const invStore = useInvStore()
+const pmcStore = usePMCStore()
+
+const PART_NUM = ref('')
+const dataStocPart_num = ref<Record<string, any>[]>([])
+const dataMaterialOnWay = ref<Record<string, any>[]>([])
+const dataPlanUsePartNum_Porj = ref<Record<string, any>[]>([])
+const dataPlanUsePartNum_Porj_Ngay = ref<Record<string, any>[]>([])
+
+//    computed:{
+const dataSeriaMateralUser_Date = computed(() => {
             let data=[], i=0,  Qty_WH=0
-            data=this.dataPlanUsePartNum_Porj_Ngay.sort((a,b)=>{
-                if (moment(a.DATE,'DD-MM-YYYY')<moment(b.DATE,'DD-MM-YYYY')) return -1
+            data=dataPlanUsePartNum_Porj_Ngay.value.sort((a,b)=>{
+                if (dayjs(a.DATE,'DD-MM-YYYY')<dayjs(b.DATE,'DD-MM-YYYY')) return -1
                 else return 1
             })
             
             //console.log(data);
             // bổ sung tồn kho
-            if (data.length> 0 && this.dataStocPart_num[0]) 
+            if (data.length> 0 && dataStocPart_num.value[0]) 
             {
-                data[0].QTY_WH=this.dataStocPart_num[0].QTY 
-                Qty_WH=this.dataStocPart_num[0].QTY 
+                data[0].QTY_WH=dataStocPart_num.value[0].QTY 
+                Qty_WH=dataStocPart_num.value[0].QTY 
             }
             // bổ sung nguyên liệu mua về
-            this.dataMaterialOnWay.forEach(element => { 
+            dataMaterialOnWay.value.forEach(element => { 
                 i=0;
-                while (i< data.length && moment(element.EXP_RECEIVED_DATE,'DD-MM-YYYY')> moment(data[i].DATE,'DD-MM-YYYY')) {
+                while (i< data.length && dayjs(element.EXP_RECEIVED_DATE,'DD-MM-YYYY')> dayjs(data[i].DATE,'DD-MM-YYYY')) {
                     i++
                 }
                 
@@ -112,50 +115,56 @@ export default {
                 i++
             }
             return data
-        },
-        
-    },
-    methods:{
-        ...mapActions(['getStoc_PartNum','getPlanUsePartNum_Porj','getMaterial_OnWay_Part']),
-        handExportExel() {
+        })
+//    methods:{
+const handExportExel = () => {
             exportData("Xlsx", "exportable_MaterialUse");
-        },
-        handInfoSeriaMateralUser(){
+        }
+const handInfoSeriaMateralUser = async () => {
             
-            this.pro_getStoc_PartNum()
-            this.Pro_getPlanUsePartNum_Porj()
-            this.pro_getMaterial_OnWay_Part()
-        },
-        pro_getMaterial_OnWay_Part(){
-            let data ={PART_NUM: this.PART_NUM}
-            this.getMaterial_OnWay_Part(data).then(res=>{
-                this.dataMaterialOnWay=res.dataMaterialOnWay
-            })
-        },
-        pro_getStoc_PartNum(){
-            let data ={PART_NUM: this.PART_NUM}
-            this.getStoc_PartNum(data).then(res=>{
-                this.dataStocPart_num= res.dataStocPart_num
-            })
-        },
-        Pro_getPlanUsePartNum_Porj(){
-            let data ={PART_NUM: this.PART_NUM}
-            this.getPlanUsePartNum_Porj(data).then(res=>{
-                this.dataPlanUsePartNum_Porj=res.dataPlanUsePartNum_Porj
-                this.dataPlanUsePartNum_Porj_Ngay=[]
+            await pro_getStoc_PartNum()
+            await Pro_getPlanUsePartNum_Porj()
+            await pro_getMaterial_OnWay_Part()
+        }
+const pro_getMaterial_OnWay_Part = async () => {
+            let data ={PART_NUM: PART_NUM}
+            const res= await pmcStore.getMaterial_OnWay_Part(data)
+                dataMaterialOnWay.value=res.dataMaterialOnWay
 
-                this.dataPlanUsePartNum_Porj.forEach(element => {
-                    let i_ngay = moment(element.START_PRODUCT,'YYYY-MM-DD'),
-                        Today= moment(moment().format('YYYY-MM-DD'),'YYYY-MM-DD'), 
-                        End_date=moment(element.END_PRODUCT,'YYYY-MM-DD'),
+        }
+const pro_getStoc_PartNum = async () => {
+            let data ={PART_NUM: PART_NUM}
+            const res= await invStore.getStoc_PartNum(data)
+            dataStocPart_num.value= res.dataStocPart_num
+        }
+const Pro_getPlanUsePartNum_Porj = async () => {
+            let data ={PART_NUM: PART_NUM}
+            const res= await pmcStore.getPlanUsePartNum_Porj(data)
+                dataPlanUsePartNum_Porj.value=res.dataPlanUsePartNum_Porj
+                dataPlanUsePartNum_Porj_Ngay.value=[]
+
+                dataPlanUsePartNum_Porj.value.forEach(element => {
+                    let i_ngay = dayjs(element.START_PRODUCT,'YYYY-MM-DD'),
+                        Today= dayjs(dayjs().format('YYYY-MM-DD'),'YYYY-MM-DD'), 
+                        End_date=dayjs(element.END_PRODUCT,'YYYY-MM-DD'),
                         QTY_MATERIAL=element.QTY_MATERIAL
 
-                        console.log(Today,i_ngay);
+                        //console.log(Today,i_ngay);
                         
                         i_ngay= i_ngay>Today? i_ngay:Today
 
                     while (i_ngay<=End_date && QTY_MATERIAL>0) {
-                        let row_day_Proj={}
+                        let row_day_Proj={
+                            DATE: '',
+                            PDD_ID: 0,
+                            NUM_WO: '',
+                            PART_PROJ: '',
+                            PART_NUM: '',
+                            USE: 0,
+                            QTY_WH: 0,
+                            QTY_PO: 0,
+                            QTY_SUM: 0
+                        }
                         row_day_Proj.DATE=i_ngay.format('DD-MM-YYYY')
                         row_day_Proj.PDD_ID=element.PDD_ID
                         row_day_Proj.NUM_WO=element.NUM_WO
@@ -166,17 +175,16 @@ export default {
                         row_day_Proj.QTY_PO = 0
                         row_day_Proj.QTY_SUM = 0
 
-                        this.dataPlanUsePartNum_Porj_Ngay.push(row_day_Proj)
+                        dataPlanUsePartNum_Porj_Ngay.value.push(row_day_Proj)
                         QTY_MATERIAL=QTY_MATERIAL-element.BASE_QTY * element.QTY_PRO_DAY
                         i_ngay=i_ngay.add(1,'days')
                     }
-                });
+                })
+        }
                 //console.log(this.dataPlanUsePartNum_Porj_Ngay);                
 
-            })
-        }
-    }
-}
+
+
 </script>
 
 <style>

@@ -1,0 +1,579 @@
+<template>
+  <div @click="handHideMenuPupo()">
+    <el-row :gutter="20" class="row col-md-12">
+      <!-- thông tin nhu cầu -->
+      <el-col :span="4" class="col-md-2">
+        <!-- Tên dự án -->
+        <b>Dự án: </b>
+        <p>{{ ObjNhuCau.projec }}</p>
+      </el-col>
+      <el-col :span="4" class="col-md-2">
+        <!-- Từ Ngày -->
+        <b>Từ ngày:</b>
+        <p>{{ ObjNhuCau.START_DEMANDS }}</p>
+      </el-col>
+      <el-col :span="4" class="col-md-2">
+        <!-- Đến Ngày -->
+        <b>Đến ngày:</b>
+        <p>{{ ObjNhuCau.END_DEMANDS }}</p>
+      </el-col>
+      <el-col :span="4" class="col-md-2">
+        <!-- Số lượng -->
+        <b> Số lượng:</b>
+        <p>{{ ObjNhuCau.QTY }}</p>
+      </el-col>
+    </el-row>
+    <el-button-group>
+      <el-button
+        style="font-size: 16px"
+        @click="handSaveDemandMaterial(ObjNhuCau.id)"
+      >
+      <Icon name="save-50" :size="18" />&nbsp;Lưu Lưu
+      </el-button>
+      <el-button
+        :icon="Check"
+        style="font-size: 16px"
+        @click="handXacNhanHoanThanhCongDoanMRP(ObjNhuCau.id, 2)"
+      >
+        Xác Nhận Hoàn thành<i class="fa fa-check" style="color: green"></i>
+      </el-button>
+      <el-button  :icon="ShoppingTrolley" style="font-size: 16px" @click="handDanhSachNLBoSung(ObjNhuCau.id)">
+        Nguyên Liệu Cần Mua
+      </el-button>
+    </el-button-group>
+
+    <div class="row m-2">
+      <chi-thi-mau
+        :list_ChiThiMau="dataListChiThiMau"
+        @ActionChithiMau="ActionChithiMau"
+      />
+    </div>
+    <div class="tableFixHead" style="height: 90vh">
+      <table class="table table-sm">
+        <thead>
+          <tr class="p-0">
+            <th class="p-0" style="min-height: 70px; min-width: 60px" rowspan="2" >
+              STT
+            </th>
+            <th
+              class="p-0" style="min-height: 70px; min-width: 150px" rowspan="2" >
+              PARTNUM
+            </th>
+            <th
+              class="p-0"  style="min-height: 70px; min-width: 150px" rowspan="2">
+              TÊN NGUYÊN LIỆU
+            </th>
+            <th
+              class="p-0" style="min-height: 70px; min-width: 80px" rowspan="2">
+              SL CƠ SỞ
+            </th>
+            <th
+              class="p-0" style="min-height: 70px; min-width: 60px"  rowspan="2">
+              ĐƠN VI
+            </th>
+            <th class="p-0"  style="min-height: 70px; min-width: 160px"  colspan="2" >
+              NGUYÊN LIỆU CẦN
+            </th>
+            <!-- <th style="min-height: 70px; min-width:60px">HAO HỤT</th> -->
+            <th class="p-0" style="min-height: 70px; min-width: 80px" colspan="2" >
+              TỒN KHO
+              <el-button :icon="Download" @click="handGetTongHopTonKho(ObjNhuCau.id)" >
+              </el-button>
+            </th>
+             <th  class="p-0" style="min-height: 70px; min-width: 60px" rowspan="2" >
+              NL DỰ OW
+              <el-button
+                :icon="Download"
+                @click="handGetMateralMuadu_onway(ObjNhuCau.id)"
+              >
+              </el-button>
+            </th>
+            <th class="p-0" style="min-height: 70px; min-width: 60px"  rowspan="2" >
+              NL THỘC D/A Đ/SX
+              <el-button
+                :icon="Download"
+                @click="handGetMateralChoDuAnDangSX(ObjNhuCau.id)"
+              >
+              </el-button>
+            </th>
+            <th  class="p-0"  style="min-height: 70px; min-width: 60px" rowspan="2" title="Số nguyên liệu đáp ứng cho SX dự án" >
+              SỐ ĐÁP ỨNG
+            </th>
+            <th class="p-0" style="min-height: 70px; min-width: 60px" rowspan="2" title="Số nguyên liệu còn thiếu" >
+              SỐ THIẾU
+            </th>
+            
+            <th class="p-0" colspan="3" title="Số nguyên liệu còn thiếu">
+              DỰ KIẾN<a
+                class="btn p-0"
+                style="color: darkblue"
+                @click="handAllPO()"
+                >{{ showIc }}</a
+              >
+            </th>
+          </tr>
+          <tr>
+            <th style="min-height: 70px; min-width: 80px">SỐ NL</th>
+            <th style="min-height: 70px; min-width: 60px">HAO HỤT</th>
+            <th style="min-height: 70px; min-width: 80px">KHO</th>
+            <th style="min-height: 70px; min-width: 60px">SẢN XUẤT</th>
+            <th  class="p-0" style="min-height: 70px; min-width: 60px"> NGÀY MUA </th>
+            <th style="min-height: 70px; min-width: 60px">SỐ NL</th>
+            <th style="min-height: 70px; min-width: 60px">NGÀY NHẬN</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            style="cursor: pointer"
+            v-for="(item, index) in showdataMaterials"
+            :key="index"
+            :class="mau(item)"
+          >
+            <td style="min-height: 70px; min-width: 60px">{{ index + 1 }}</td>
+            <td style="min-height: 70px; min-width: 150px">
+              <input
+                type="checkbox"
+                v-model="item.NCNR"
+                @change="handSetNCNR_REQ_Material_Demand({ NCNR: item.NCNR, PART_NUM: item.PART_NUM })"
+              />
+              <span
+                @dblclick="handSetMaterialPhu(item.PART_NUM)"
+                title="Nháy đúp để cập nhật nguyên liệu"
+                >{{ item.PART_NUM }}</span
+              >
+            </td>
+            <td>{{ item.PART_NAME }}</td>
+            <td style="min-height: 70px; min-width: 80px">
+              {{ item.QTY_UNIT }}
+            </td>
+            <td style="min-height: 70px; min-width: 60px">{{ item.UNIT }}</td>
+            <td style="min-height: 70px; min-width: 60px">{{ item.QTY }}</td>
+            <td style="min-height: 70px; min-width: 60px">
+              {{ item.QTY_WASTAGE }}
+            </td>
+            <td style="min-height: 70px; min-width: 60px"> {{ item.QTY_STOC }} </td>
+            <td style="min-height: 70px; min-width: 60px">{{ item.QTY_PROC }}</td>
+            <td style="min-height: 70px; min-width: 60px">{{item.QTY_ONWAY}}</td>
+            <td
+              style="min-height: 70px; min-width: 60px"
+              @dblclick="handObjectPhuthuoc($event, item.PART_NUM)"
+              title="Nháy đúp chuột để lấy dự án phụ thuộc"
+            >
+              {{ item.QTY_PRODUC }}
+            </td>
+            <td style="min-height: 70px; min-width: 60px">
+              {{ item.QTY_STOC + item.QTY_ONWAY + item.QTY_PROC - item.QTY_PRODUC }}
+            </td>
+            
+            <!--item.QTY_RESPONSE -->
+            <td style="min-height: 70px; min-width: 60px">
+              {{
+                (item.QTY + item.QTY_WASTAGE -  (item.QTY_STOC + item.QTY_ONWAY + item.QTY_PROC - item.QTY_PRODUC)) > 0
+                  ? item.QTY + item.QTY_WASTAGE - ( item.QTY_STOC + item.QTY_ONWAY + item.QTY_PROC - item.QTY_PRODUC)
+                  : 0
+              }}
+            </td>
+            <td style="min-height: 70px; min-width: 60px">{{ item.PROPOSED_DATE_PO }}</td>
+            <td style="min-height: 70px; min-width: 60px">{{ item.QTY_REQ }}</td>
+            <td style="min-height: 70px; min-width: 60px">
+              {{ item.EXP_RECEIVED_DATE }}
+            </td>
+            <!-- <td style="min-height: 70px; min-width:60px">
+                <input type="text" v-model="item.extra" style="width:80px">
+              </td> -->
+            <!-- <td style="min-height: 70px; min-width:100px">USED</td> -->
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="menuPopu" id="menuPopu">
+      <du-an-phu-thuoc :Demand_PART="Demand_PART" />
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import {  Download, Check, ShoppingTrolley } from "@element-plus/icons-vue";
+
+import { usePMCStore } from '@/stores/PMC.store';
+import { useMRPStore } from '@/stores/mrp.store';
+import { useInvStore } from '@/stores/inv.store';
+
+import ChiThiMau from "@/components/controls/ChiThiMau.vue";
+import DuAnPhuThuoc from "./DuAnPhuThuoc.vue";
+import Icon from '@/components/controls/Icon.vue';
+
+const route = useRoute();
+const pmcStore = usePMCStore();
+const mprStore = useMRPStore();
+const invStore = useInvStore();
+
+const ObjNhuCau = ref<Record<string, any>>({});
+const dataMaterials = ref<Record<string, any>[]>([]);
+const isSaveTon = ref(false);
+const isSaveMateria_DangSX = ref(false);
+const irhcode = ref<(string | null)>(null);
+const irhIdERP = ref<(string | null)>(null);
+const showIc = ref("+");
+const Demand_PART = ref({});
+const MauSelect = ref("");
+
+      //showdataMaterials:[],
+
+const dataChithimau = ref([
+  { text: "Đã đủ", color: "#009933" },
+  { text: "Đang vận chuyển", color: "#00ffbb" },
+  { text: "Đã mua", color: "#ffff00" },
+  { text: "Chưa mua", color: "#f50707" },        
+  { text: "Nguyên liệu phụ", color: "#aeaeae" },
+]);
+//  computed: {
+const showdataMaterials = computed(() => {
+      let data;
+      if (MauSelect.value == "") {
+        if (showIc.value == "+") {
+          data = dataMaterials.value.filter((item) => {
+            return item.rn == 1;
+          });
+        } else {
+          data = dataMaterials.value;
+        }
+        data.sort((a, b) => {
+          return a.isSEC_MATERIAL - b.isSEC_MATERIAL;
+        });
+        //console.log(data);
+      } else {
+        data = dataMaterials.value.filter((item) => {
+          return item.mau == MauSelect.value;
+        });
+      }
+      //console.log(data);
+      return data;
+    });
+const dataListChiThiMau = computed(() => {
+      let jsondata = JSON.stringify(dataChithimau.value);
+      let datact = JSON.parse(jsondata);
+
+      let m1 = 0,
+        m2 = 0,
+        m3 = 0,
+        m4 = 0,
+        m5 = 0;
+      let m = "";
+      dataMaterials.value.forEach((item) => {
+        m = mau(item);
+        if (m == "mauNenXanh") {
+          m1 = m1 + 1;
+        }
+        m = mau(item);
+        if (m == "mauNenXanhnGoc") {
+          m2 = m2 + 1;
+        }
+
+        if (m == "mauNenVang") {
+          m3 = m3 + 1;
+        }
+
+        if (m == "mauNenDo") {
+          m4 = m4 + 1;
+        }
+
+        if (m == "mauNenXam") {
+          m5 = m5 + 1;
+        }
+      });
+      console.log("jkjk", dataChithimau.value);
+
+      datact[0].text = `${datact[0].text} ${m1}`;
+      datact[1].text = `${datact[1].text} ${m2}`;
+      datact[2].text = `${datact[2].text} ${m3}`;
+      datact[3].text = `${datact[3].text} ${m4}`;
+      datact[4].text = `${datact[4].text} ${m5}`;
+
+
+      return datact;
+    });
+
+//  methods: {
+    // ...mapActions([
+    //   "getMateralDemands_IDDemand",
+    //   "getTongHopTonKhoMaterial",
+    //   "getMateralChoDuAnDangSX",
+    //   "ERPgetObReceived",
+    //   "saveStocOfDemand",
+    //   "ChyenTrangThaiNhuCauSX",
+    //   "LuuNhapNLMRP",
+    //   "setNCNR_REQ_Material_Demand",
+    //   'GetMateralMuadu_onway'
+    // ]),
+const handSetNCNR_REQ_Material_Demand = (item: any) => {
+      let data={
+        PDD_ID:route.query.id,
+        NCNR:item.NCNR,
+        PART_NUM: item.PART_NUM
+      }
+      pmcStore.setNCNR_REQ_Material_Demand(data);
+    }
+const    handGetMateralMuadu_onway = async (id: number) => {
+    const res = await pmcStore.getMateralMuadu_onway({ id: id });
+    for (let i = 0; i < dataMaterials.value.length; i++) {
+      if (dataMaterials.value[i].rn == 1) {
+        let data = res.dataMateralMuadu_onway.filter(
+          (vattu: any) => vattu.PART_NUM == dataMaterials.value[i].PART_NUM
+        );
+        dataMaterials.value[i].QTY_ONWAY = data[0] ? data[0].QTY_ONWAY : 0;
+      }
+    }
+  }
+const    ActionChithiMau = (p_color: string) => {
+      MauSelect.value = p_color;
+    }
+const handHideMenuPupo = () => {
+      const menu = document.querySelector(".menuPopu");
+      if (menu) {
+        menu.classList.remove("hienMenuPopu");
+      }
+    }
+const    handObjectPhuthuoc = (event: MouseEvent, PART_NUM: string) => {
+      Demand_PART.value = {
+        PDD_ID: route.query.id,
+        PART_NUM: PART_NUM,
+      };
+      event.stopPropagation();
+      const menuPopu = document.getElementById("menuPopu");
+      if (menuPopu) {
+        menuPopu.style.top = event.clientY + "px";
+        menuPopu.style.left = event.clientX + "px";
+        const menu = document.querySelector(".menuPopu");
+        if (menu) {
+          menu.classList.toggle("hienMenuPopu");
+        }
+      }
+    }
+const handSetMaterialPhu = (PART_NUM: string) => {
+      let src = "";
+      src = "/UpdateTypeMaterial?partNum=" + PART_NUM;
+      window.open(
+        src,
+        "formAddTypeMaterial",
+        "fullscreen=yes, scrollbars=auto,width=600,height=450, titlebar=no"
+      );
+    }
+const  mau = (item: any) => {
+      // Xám Vật tư không tính nguyên liệu Mua
+      if (item.isSEC_MATERIAL == 1 || item.IS_SIME == 1) {
+        item.mau = "#aeaeae";
+        return "mauNenXam";
+      }
+      // màu xanh đủ nguyên liệu
+      if (item.QTY + item.QTY_WASTAGE - item.QTY_RESPONSE <= 0) {
+        item.mau = "#009933";
+        return "mauNenXanh";
+      }
+      // Màu xanh lá cây đang vận chuyển           
+      if (item.QTY_Ship  && item.QTY_Ship>0) {
+        item.mau = "#00ffbb";
+        return "mauNenXanhnGoc";
+      }
+      // vàng đã có thông tin mua hàng 
+      if (item.QTY + item.QTY_WASTAGE - item.QTY_RESPONSE > 0 && item.PO_QTY) {
+        item.mau = "#ffff00";
+        return "mauNenVang";
+      }
+
+      // đỏ chưa có thông tin mua hàng
+      if (
+        item.QTY + item.QTY_WASTAGE - item.QTY_RESPONSE > 0 &&
+        !item.PO_QTY &&
+        !item.EXP_RECEIVED_DATE
+      ) {
+        item.mau = "#f50707";
+        return "mauNenDo";
+      }
+      return "";
+    }
+const    handAllPO = () => {
+      if (showIc.value === "+") {
+        showIc.value = "-";
+        //this.showdataMaterials=this.dataMaterials.filter(item=>() => { return item.rn==1})
+      } else {
+        showIc.value = "+";
+        //this.showdataMaterials=this.dataMaterials
+      }
+    }
+const    handDanhSachNLBoSung = (id: number) => {
+      let src = "";
+      src =
+        "/pmc/Form_TongHopBoSungNL?id=" +
+        route.query.id +
+        "&projec=" +
+        route.query.projec +
+        "&Start=" +
+        route.query.Start +
+        "&end=" +
+        route.query.end +
+        "&qty=" +
+        route.query.qty +
+        "&PO_CODE=" +
+        route.query.PO_CODE;
+      window.open(
+        src,
+        "Form_TongHopBoSungNL",
+        "fullscreen=yes, scrollbars=auto, titlebar=no"
+      );
+    }
+const Proc_MRPUocSoSX = (id: number) => {
+      mprStore.MRPuocSoSX({ code: id }).then((res: any) => {
+      ObjNhuCau.value.UOC = res.dataMRPuocSoSX;
+      });
+    }
+   
+const    handXacNhanHoanThanhCongDoanMRP = (id: number, Status: number) => {
+      //console.log(id,Status);
+      if (confirm("Bạn có xác nhận hoàn thành công đoạn này")) {
+        pmcStore.ChyenTrangThaiNhuCauSX({ id: id, Status: Status });
+      }
+    }
+const    handLuuNhapNLMRP = async (id: number) => {
+      await pmcStore.LuuNhapNLMRP({
+        id: id,
+        data: dataMaterials.value,
+        irhcode: irhcode.value,
+        irhIdERP: irhIdERP.value,
+      })
+      ProGetMateralDemands_IDDemand(Number(route.query.id));
+        //Proc_MRPUocSoSX(id);
+
+    }
+const    handERPgetObReceived =  async () => {
+      const inputCode = prompt("Nhập mã đơn hàng");
+      if (inputCode !== null && inputCode.trim() !== "") {
+        irhcode.value = inputCode;
+        const res = await invStore.ERPgetObReceived(irhcode.value);
+        if (res.ObRECEIVED) {
+          irhIdERP.value = irhcode.value;
+          irhcode.value = res.ObRECEIVED.IRH_CODE;
+
+          dataMaterials.value.forEach((el, i) => {
+            dataMaterials.value[i].extra = 0;
+            res.ObRECEIVED.dsVattu.forEach((element: any) => {
+              if (el.PART_NUM == element.PART_NUM) {
+                dataMaterials.value[i].extra =
+                  dataMaterials.value[i].extra + element.REC_QUANTITY;
+              }
+            });
+          });
+        }
+      }
+    }
+const ProGetMateralDemands_IDDemand = (id: number) => {
+      pmcStore.getMateralDemands_IDDemand({ id: id }).then((res) => {
+        dataMaterials.value = res.dataMaterials;
+        dataMaterials.value.forEach((element) => {
+          element.extra = 0;
+          if (element.PART_NUM.includes("PGC")) element.checkUoc = false;
+          else element.checkUoc = true;
+          if (element.isSEC_MATERIAL == true) element.checkUoc = false;
+        });
+        //console.log(dataMaterials.value);
+      });
+    }
+const handGetTongHopTonKho = async (id: number) => {
+    const res = await pmcStore.getTongHopTonKhoMaterial({ id: id });
+    for (let i = 0; i < dataMaterials.value.length; i++) {
+          if (dataMaterials.value[i].rn == 1) {
+            let data = res.dataStocMaterials.filter(
+              (vattu: any) => vattu.PART_NUM == dataMaterials.value[i].PART_NUM
+            );
+            dataMaterials.value[i].QTY_STOC = data[0] ? data[0].QTY : 0;
+            dataMaterials.value[i].QTY_PROC = data[0] ? data[0].QTY_PROC : 0;
+          }
+        };
+        isSaveTon.value = true;
+    }
+const    handGetMateralChoDuAnDangSX = async (id: number) => {
+      const res: any = await pmcStore.getMateralChoDuAnDangSX({ id: id });
+        //console.log(res.dataMateralChoDuAnDangSX,this.dataMaterials);
+        
+        if (res.dataMateralChoDuAnDangSX) {
+
+          dataMaterials.value.forEach((el, i) => {
+            dataMaterials.value[i].QTY_PRODUC=0
+            res.dataMateralChoDuAnDangSX.forEach((element: any) => {
+              //console.log(el.PART_NUM== element.PART_NUM && Number(el.rn)==1,element.remains );              
+              if (el.PART_NUM == element.PART_NUM && Number(el.rn) == 1) {
+                dataMaterials.value[i].QTY_PRODUC = element.remains;
+              }
+            });
+          });
+        }
+        isSaveMateria_DangSX.value = true;
+        //this.dataMateralChoDuAnDangSX=res.dataMateralChoDuAnDangSX
+    }
+const handSaveDemandMaterial = (id: number) => {
+      //console.log(isSaveTon.value ,isSaveMateria_DangSX.value);
+      // if (isSaveTon.value && isSaveMateria_DangSX.value) {
+      proSaveStocOfDemand(id);
+      // }else{
+      //   confirm('Cần phải tổng hợp số liệu tồn kho và sô nguyên liệu còn cho dự án đang SX')
+      // };
+      // if(this.isSaveMaterialDemand){
+
+      // };
+    }
+const    proSaveStocOfDemand = (id: number) => {
+      
+      
+      let data = showdataMaterials.value.filter((item) => item.rn == 1);
+      //console.log(data);
+      pmcStore.saveStocOfDemand({ id: id, data: data }).then(() => {
+        //this.Proc_MRPUocSoSX(id);
+        ProGetMateralDemands_IDDemand(Number(route.query.id));
+      });
+    }
+onMounted(() => {
+  ObjNhuCau.value.id = route.query.id;
+  ObjNhuCau.value.projec = route.query.projec;
+  ObjNhuCau.value.START_DEMANDS = route.query.Start;
+  ObjNhuCau.value.END_DEMANDS = route.query.end;
+  ObjNhuCau.value.QTY = route.query.qty;
+  ObjNhuCau.value.UOC = 0;
+  //Proc_MRPUocSoSX(route.query.id);
+  ProGetMateralDemands_IDDemand(Number(route.query.id));
+  showIc.value = "+";
+});
+
+
+</script>
+
+<style scoped>
+.boxNote {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  position: relative;
+  top: 6px;
+  left: 5px;
+}
+.menuPopu {
+  background-color: #ffffff;
+  color: black;
+  position: absolute;
+  min-width: 100px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.3);
+  display: none;
+  z-index: 10;
+}
+.menuPopu a {
+  display: block;
+  text-decoration: none;
+}
+.menuPopu a:hover {
+  background-color: #95a5a6;
+}
+.hienMenuPopu {
+  display: block;
+}
+</style>
