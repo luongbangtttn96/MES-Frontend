@@ -1,41 +1,43 @@
 <template>
-  <div>
-    <div class="container text-center col-12">
-      <h3>
-        <b><label for="">PHIẾU ĐỀ NGHỊ MUA HÀNG</label></b>
-      </h3>
-    </div>
-    <div class="row container">
+  <div> 
+    <el-row>
       <div>
-        <button @click="handCreate_POERP()">Tạo đề nghị mua hàng ERP</button>
+        <el-button @click="handCreate_POERP()">Tạo đề nghị mua hàng ERP</el-button>
       </div>
-      <div><button>Báo cáo mua hàng</button></div>
-      <div><button @click="exportDNMuaHang()">Xuất Excel</button></div>
+      <div><el-button>Báo cáo mua hàng</el-button></div>
+      <div><el-button @click="exportDNMuaHang()">Xuất Excel</el-button></div>
+    </el-row>
+    <div id="printToPDF" class="quote-sheet">
+    <div class="title text-center">
+      <h3><b><label for="">PHIẾU ĐỀ NGHỊ MUA HÀNG</label></b></h3>
     </div>
-    <div class="container text-right col-12">Hồ Chí Minh, Ngày:{{ ToDay }}</div>
+   
+    <div class="text-right">Hồ Chí Minh, Ngày:{{ ToDay }}</div>
     <div class="col ml-2">
-      Họ và tên người đề nghị (Propose): {{ currentUser.fullName }}
+      Họ và tên người đề nghị (Propose): {{ currentUser?.fullName }}
     </div>
     <div class="col ml-2">
-      Tên Dự Án: <b>{{ this.$route.query.projec }}</b>
+      Tên Dự Án: <b>{{ route.query.projec }}</b>
     </div>
-    <div class="col ml-2">PO: {{ this.$route.query.PO_CODE }}</div>
+    <div class="col ml-2">PO: {{ route.query.PO_CODE }}</div>
     <div class="row ml-2">
-      <div class="col-2">Từ Ngày: {{ this.$route.query.Start }}</div>
-      <div class="col-2">Đến Ngày: {{ this.$route.query.end }}</div>
+      <div class="col-2">Từ Ngày: {{ route.query.Start }}</div>
+      <div class="col-2">Đến Ngày: {{ route.query.end }}</div>
     </div>
     <div class="clo ml-4">
-      Số Lượng: <b> {{ this.$route.query.qty }} </b>
+      Số Lượng: <b> {{ route.query.qty }} </b>
     </div>
 
     <table class="table table-sm" id="exportable_DeNghiMuaHang">
       <thead>
-        <th>STT</th>
-        <th>Mã nguyên liệu</th>
-        <th>Tên nguyên liệu</th>
-        <th>Đơn vị</th>
-        <th>Số lượng</th>
-        <th>Ngày Mua</th>
+        <tr>
+          <th>STT</th>
+          <th>Mã nguyên liệu</th>
+          <th>Tên nguyên liệu</th>
+          <th>Đơn vị</th>
+          <th>Số lượng</th>
+          <th>Ngày Mua</th>
+        </tr>
       </thead>
       <tbody>
         <tr v-for="(item, index) in dataMaterial" :key="index">
@@ -48,27 +50,34 @@
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
 </template>
 
-<script>
-import { mapActions, mapGetters } from "vuex";
-import XLSX from "xlsx";
-import moment from "moment";
-export default {
-  data() {
-    return {
-      dataMaterial: null,
-      ToDay: moment().format("DD/MM/YYYY"),
-    };
-  },
-  computed: {
-    ...mapGetters(["currentUser"]),
-  },
-  methods: {
-    ...mapActions(["GetMaterial_ThieuChoDamends", "Create_POERP"]),
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import * as XLSX from 'xlsx';
+import dayjs from "dayjs";
 
-    exportDNMuaHang(type, fn, dl) {
+import { useAuthStore } from '@/stores/auth.store';
+import { usePMCStore } from '@/stores/PMC.store';
+import { useRoute } from "vue-router";
+
+const pmcStore = usePMCStore();
+const authStore = useAuthStore();
+const route = useRoute();
+
+const dataMaterial = ref(null);
+const ToDay = ref(dayjs().format("DD/MM/YYYY"));
+
+//computed: {
+ const currentUser = computed(() => authStore.user);
+
+//  methods: {
+
+//    ...mapActions(["GetMaterial_ThieuChoDamends", "Create_POERP"]),
+
+const exportDNMuaHang = () => {
       //console.log(type);
       var elt = document.getElementById("exportable_DeNghiMuaHang");
       var wb = XLSX.utils.table_to_book(elt, { raw: true });
@@ -78,32 +87,46 @@ export default {
         origin: -1,
       });
       XLSX.writeFile(wb, "ReportDeNghiMH.xlsx");
-    },
+    }
 
-    ProGetMaterial_ThieuChoDamends(id) {
-      this.GetMaterial_ThieuChoDamends({ code: id }).then((res) => {
-        this.dataMaterial = res.dataMaterial;
-        this.$forceUpdate();
-      });
-    },
-    handCreate_POERP() {
+const ProGetMaterial_ThieuChoDamends = async (id: string) => {
+    const res = await  pmcStore.GetMaterial_ThieuChoDamends({ code: id })
+    dataMaterial.value = res.dataMaterial;
+  }
+const handCreate_POERP = () => {
       let data = {
-        UserName: this.currentUser.fullName,
-        projec: this.$route.query.projec,
-        dataMaterial: this.dataMaterial,
-        PDD_ID: this.$route.query.id,
-        PO_CODE: this.$route.query.PO_CODE,
-        QTY: this.$route.query.qty,
+        UserName: currentUser.value?.fullName ,
+        projec: route.query.projec,
+        dataMaterial: dataMaterial.value,
+        PDD_ID: route.query.id,
+        PO_CODE: route.query.PO_CODE,
+        QTY: route.query.qty,
       };
-      this.Create_POERP(data);
-    },
-  },
+      pmcStore.Create_POERP(data);
+    };
 
-  created() {
-    this.ProGetMaterial_ThieuChoDamends(this.$route.query.id);
-  },
-};
+onMounted(() => {
+    ProGetMaterial_ThieuChoDamends(String(route.query.id));
+  });
+
 </script>
 
 <style scoped>
+.quote-sheet {
+	width: 210mm;
+	min-height: 297mm;
+	margin: 0 auto;
+	background: #ffffff;
+	color: #111111;
+	padding: 14mm 12mm;
+	font-size: 14px;
+	line-height: 1.35;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+.title {
+	text-align: center;
+	font-size: 24px;
+	margin: 8px 0 14px;
+}
+
 </style>

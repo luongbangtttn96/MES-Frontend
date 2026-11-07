@@ -39,7 +39,7 @@ import PlanlotClosing from '../components/pmc/lotClosing/semiFinishedProduct.vue
 import ViewListScheduPro from '../components/pmc/MPS/Schedure/PlanSchedureProduc.vue'
 
 import DamendsCaculationMaterial from '../components/pmc/MPS/Demands/DemandsCalculationMaterial.vue';
-import Form_TongHopBoSungNL from '../components/pmc/MPS/Demands/Form_TongHopBoSungNL.vue';
+
 import DemandsTheoDoiMateral from '../components/pmc/MPS/Demands/DemandsTheoDoiMateral.vue'
 import XacNhanMuaNL from '../components/pmc/MPS/Demands/XacNhanMuaNL.vue'
 import chuyenBoPhanLamViec from '../components/pmc/ChuyenBoPhanLamviec.vue';
@@ -1410,12 +1410,7 @@ export default new Router({
       beforeEnter: ifAuthenticated
     },
 
-    {
-      path: '/pmc/Form_TongHopBoSungNL',
-      name: 'Form_TongHopBoSungNL',
-      component: Form_TongHopBoSungNL,
-      beforeEnter: ifAuthenticated
-    },
+
 
   
 

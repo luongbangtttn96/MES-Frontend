@@ -2355,7 +2355,7 @@ const getInforMaterail_day = async (data= null ) => {
 
     // Nhu cầu mua hàng sang ERP
     // code 10/04/2023 
-    const Create_POERP = async ( data=null ) => {
+    const Create_POERP = async ( data: any ) => {
         appStore.isLoading = true
         try {
             //console.log(config);
@@ -2833,7 +2833,7 @@ const getInforMaterail_day = async (data= null ) => {
 
      // Tổng hợp nguyên liệu còn thiếu cho nhu cầu dự án
     //code 13/06/2022
-    const GetMaterial_ThieuChoDamends = async ( data=null ) => {
+    const GetMaterial_ThieuChoDamends = async ( data: any ) => {
         //console.log(data);
         appStore.isLoading = true
         try {
@@ -4035,6 +4035,8 @@ const saveMaterialExist_WO_NOT_EXPORT = async ( dataMaterialExist_WO_NOT_EXPORT=
 }
 
 return {
+    Create_POERP,
+    GetMaterial_ThieuChoDamends,
     getMateralChoDuAnDangSX,
     saveStocOfDemand,
     getMateralDemands_IDDemand,

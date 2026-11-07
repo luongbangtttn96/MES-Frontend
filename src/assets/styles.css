@@ -295,6 +295,12 @@ tfoot .colFix {
    vertical-align: bottom;
 }
 
+.text-right {
+	text-align: right;
+}
+.text-center {
+	text-align: center;
+}
 /* ======Phân trang =====*/
 .previous {
    background-color: #f1f1f1;

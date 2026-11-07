@@ -21,18 +21,20 @@
 
 	<div class="ds-calender">
 		<table ref='table'>
-			<tr class='ds-row-header'>
-				<th class='placeholder'></th>
-				<th 
-				scope='col' 
-				v-for="(label, i) in day_labels" 
-				:class="{ 'ds-today': cur_week && today.isSame(cur_week[i], 'day') }"
-				:key="label" 
-				:col-index="i">
-					<span v-if="cur_week">{{ label + " " + cur_week[i].format('M/D') }}</span>
-					<span v-else>{{ label }}</span>
-				</th>
-			</tr>
+			<thead>
+				<tr class='ds-row-header'>
+					<th class='placeholder'></th>
+					<th 
+					scope='col' 
+					v-for="(label, i) in day_labels" 
+					:class="{ 'ds-today': cur_week && today.isSame(cur_week[i], 'day') }"
+					:key="label" 
+					:col-index="i">
+						<span v-if="cur_week">{{ label + " " + cur_week[i].format('M/D') }}</span>
+						<span v-else>{{ label }}</span>
+					</th>
+				</tr>
+			</thead>
 
 			<calender-overlay
 			:cur_week="cur_week"

@@ -11,6 +11,16 @@ export default [
     },
 
     // =============== Demands ================
+    {
+      path: '/pmc/Form_TongHopBoSungNL',
+      name: 'Form_TongHopBoSungNL',
+      component: ()=> import('@/components/PMC/Demands/Form_TongHopBoSungNL.vue'),
+      meta: {
+            requiresAuth: true,
+            permission: 'BOM_VIEW',
+            hidden_menu: false,
+        }
+    },
 
     {
       path: '/pmc/ReportXuattraDemand',
